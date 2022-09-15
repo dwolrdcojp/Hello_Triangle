@@ -73,35 +73,44 @@ int main()
   // Begin Shaders, Vertex Buffer Objects, Vertex Array Objects 
 
   // 3 vertices x, y, z 
-  float vertices[] = {
-     0.5f,  0.5f, 0.0f, // top right 
-     0.5f, -0.5f, 0.0f, // bottom right 
-    -0.5f, -0.5f, 0.0f, // bottom left 
-    -0.5f,  0.5f, 0.0f  // top left 
+  float leftTriangleVertices[] = {
+    // Left triangle 
+    -0.5f, 0.5f, 0.0f, // Top 
+    -1.0f, 0.0f, 0.0f, // Left 
+     0.0f, 0.0f, 0.0f  // Right 
+  };
+float rightTriangleVertices[] = {
+    // Right triangle 
+     0.5f, 0.5f, 0.0f, // Top 
+     0.0f, 0.0f, 0.0f,  // Left 
+     1.0f, 0.0f, 0.0f // Right 
   };
 
-  unsigned int indices[] = { // note that we start from 0! 
-    0, 1, 3, // first triangle
-    1, 2, 3
-  };
+  // VAO1
+  unsigned int VAO1;
+  glGenVertexArrays(1, &VAO1);
+  glBindVertexArray(VAO1);
 
-  // VAO
-  unsigned int VAO;
-  glGenVertexArrays(1, &VAO);
-  glBindVertexArray(VAO);
+  // Generate VBO1
+  unsigned int VBO1;
+  glGenBuffers(1, &VBO1);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(leftTriangleVertices), leftTriangleVertices, GL_STATIC_DRAW);
 
-  // Generate VBO 
-  unsigned int VBO;
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  // Linking Vertex Attributes
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(0);
 
-  // EBO -- Element Array Buffer Object
-  unsigned int EBO;
-  glGenBuffers(1, &EBO);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  // VAO2
+  unsigned int VAO2;
+  glGenVertexArrays(1, &VAO2);
+  glBindVertexArray(VAO2);
+  
+  // Generate VBO2 
+  unsigned int VBO2;
+  glGenBuffers(1, &VBO2);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(rightTriangleVertices), rightTriangleVertices, GL_STATIC_DRAW);
 
   // Linking Vertex Attributes
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -176,9 +185,13 @@ int main()
 
     // Use the program 
     glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(VAO1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(VAO2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
+
 
     // Check and call events and swap the buffers
     glfwSwapBuffers(window);
