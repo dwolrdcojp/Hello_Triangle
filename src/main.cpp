@@ -74,16 +74,16 @@ int main()
 
   // 3 vertices x, y, z 
   float vertices[] = {
-     0.5f,  0.5f, 0.0f, // top right 
-     0.5f, -0.5f, 0.0f, // bottom right 
-    -0.5f, -0.5f, 0.0f, // bottom left 
-    -0.5f,  0.5f, 0.0f  // top left 
+    // Left Triangle
+    -0.5f, 0.5f, 0.0f, // Top
+    -1.0f, 0.0f, 0.0f, // Left
+     0.0f, 0.0f, 0.0f, // Right 
+    // Right Triangle 
+     0.5f, 0.5f, 0.0f, // Top
+     0.0f, 0.0f, 0.0f, // Left 
+     1.0f, 0.0f, 0.0f  // Right 
   };
 
-  unsigned int indices[] = { // note that we start from 0! 
-    0, 1, 3, // first triangle
-    1, 2, 3
-  };
 
   // VAO
   unsigned int VAO;
@@ -96,12 +96,6 @@ int main()
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  // EBO -- Element Array Buffer Object
-  unsigned int EBO;
-  glGenBuffers(1, &EBO);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
   // Linking Vertex Attributes
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -177,7 +171,7 @@ int main()
     // Use the program 
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 
     // Check and call events and swap the buffers
