@@ -9,13 +9,19 @@ const char* vertexShaderSource = "#version 330 core\n"
   " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
   "}\0";
 
-const char* fragmentShaderSource = "#version 330 core\n"
+const char* fragmentShaderSource1 = "#version 330 core\n"
   "out vec4 FragColor;\n"
   "void main()\n"
   "{\n"
   " FragColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);\n"
   "}\0";
 
+const char* fragmentShaderSource2 = "#version 330 core\n"
+  "out vec4 FragColor;\n"
+  "void main()\n"
+  "{\n"
+  " FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+  "}\0";
 
 // Callback function to adjust the viewport if the GLFW window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -125,39 +131,71 @@ int main()
   }
 
   // Fragment Shader
-  unsigned int fragmentShader;
-  fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-  glCompileShader(fragmentShader);
+  unsigned int fragmentShader1;
+  fragmentShader1 = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShader1, 1, &fragmentShaderSource1, NULL);
+  glCompileShader(fragmentShader1);
 
   // Check if the fragment shader compiled successfully
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+  glGetShaderiv(fragmentShader1, GL_COMPILE_STATUS, &success);
 
   if(!success)
   {
-    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+    glGetShaderInfoLog(fragmentShader1, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
   }
 
   // Shader Program
-  unsigned int shaderProgram;
-  shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glLinkProgram(shaderProgram);
+  unsigned int shaderProgram1;
+  shaderProgram1 = glCreateProgram();
+  glAttachShader(shaderProgram1, vertexShader);
+  glAttachShader(shaderProgram1, fragmentShader1);
+  glLinkProgram(shaderProgram1);
 
   // Check if the shader program failed 
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+  glGetProgramiv(shaderProgram1, GL_LINK_STATUS, &success);
 
   if(!success)
   {
-    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    glGetProgramInfoLog(shaderProgram1, 512, NULL, infoLog);
+    std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+  }
+
+  // Fragment Shader
+  unsigned int fragmentShader2;
+  fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
+  glCompileShader(fragmentShader2);
+
+  // Check if the fragment shader compiled successfully
+  glGetShaderiv(fragmentShader2, GL_COMPILE_STATUS, &success);
+
+  if(!success)
+  {
+    glGetShaderInfoLog(fragmentShader2, 512, NULL, infoLog);
+    std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+  }
+
+  // Shader Program
+  unsigned int shaderProgram2;
+  shaderProgram2 = glCreateProgram();
+  glAttachShader(shaderProgram2, vertexShader);
+  glAttachShader(shaderProgram2, fragmentShader2);
+  glLinkProgram(shaderProgram2);
+
+  // Check if the shader program failed 
+  glGetProgramiv(shaderProgram2, GL_LINK_STATUS, &success);
+
+  if(!success)
+  {
+    glGetProgramInfoLog(shaderProgram2, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
   }
 
   // Clean up shaders are compiling and linking them 
   glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
+  glDeleteShader(fragmentShader1);
+  glDeleteShader(fragmentShader2);
 
 
   // End Shaders, Vertex Buffer Objects, Vertex Array Objects
@@ -175,9 +213,11 @@ int main()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // Use the program 
-    glUseProgram(shaderProgram);
+    glUseProgram(shaderProgram1);
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glUseProgram(shaderProgram2);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)12);
     glBindVertexArray(0);
 
     // Check and call events and swap the buffers
