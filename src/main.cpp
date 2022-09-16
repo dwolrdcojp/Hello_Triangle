@@ -1,19 +1,23 @@
 #include "../include/glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <cmath>
 
 const char* vertexShaderSource = "#version 330 core\n"
   "layout (location = 0) in vec3 aPos;\n"
+  "out vec4 vertexColor;\n"
   "void main()\n"
   "{\n"
-  " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+  " gl_Position = vec4(aPos, 1.0);\n"
+  " vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
   "}\0";
 
 const char* fragmentShaderSource = "#version 330 core\n"
   "out vec4 FragColor;\n"
+  "uniform vec4 ourColor;\n"
   "void main()\n"
   "{\n"
-  " FragColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);\n"
+  " FragColor = ourColor;\n"
   "}\0";
 
 
@@ -68,16 +72,20 @@ int main()
 
   // Callback function if GLFW window is resized
   glfwSetWindowSizeCallback(window, framebuffer_size_callback);
+  
+  // Get the number of vertex attributes available on this hardware 
+  int numberOfVertexAttributes;
+  glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &numberOfVertexAttributes);
+  std::cout << "Maximum number of vertex attributes supported: " << numberOfVertexAttributes << std::endl;
 
   //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
   // Begin Shaders, Vertex Buffer Objects, Vertex Array Objects 
 
   // 3 vertices x, y, z 
   float vertices[] = {
-     0.5f,  0.5f, 0.0f, // top right 
-     0.5f, -0.5f, 0.0f, // bottom right 
-    -0.5f, -0.5f, 0.0f, // bottom left 
-    -0.5f,  0.5f, 0.0f  // top left 
+     0.0f,  0.5f, 0.0f, // top right 
+    -0.5f, -0.5f, 0.0f, // bottom right 
+     0.5f, -0.5f, 0.0f // bottom left 
   };
 
   unsigned int indices[] = { // note that we start from 0! 
@@ -97,11 +105,13 @@ int main()
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   // EBO -- Element Array Buffer Object
+  /*
   unsigned int EBO;
   glGenBuffers(1, &EBO);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  */
 
   // Linking Vertex Attributes
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -174,10 +184,16 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+    // Custom color for fragmentShader
+    float timeValue = glfwGetTime();
+    float greenValue = (std::cos(timeValue) / 2.0f)+ 0.5f;
+    int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+
     // Use the program 
     glUseProgram(shaderProgram);
+    glUniform4f(vertexColorLocation, 1.0f, greenValue, 0.0f, 1.0f);
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
 
     // Check and call events and swap the buffers
