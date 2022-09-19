@@ -68,9 +68,9 @@ int main()
   // 3 vertices x, y, z 
   float vertices[] = {
     // Positions       // Colors  
-    0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
-    -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left 
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // top
+    -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Top Left 
+    0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Top Right
+    0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // Bottom
   };
 
   /* EBO indices
