@@ -185,7 +185,7 @@ int main()
     // Use the program 
     // glUseProgram(shaderProgram);
     ourShader.use();
-    ourShader.setFloat("someUniform", 1.0f);
+    ourShader.setFloat("triangleOffset", 0.5f);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
