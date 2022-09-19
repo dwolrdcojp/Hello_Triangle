@@ -18,6 +18,7 @@ EXE = program
 GLFW_DIR = ../
 SOURCES = main.cpp
 SOURCES += $(GLFW_DIR)/src/glad.c 
+SOURCES += $(GLFW_DIR)/src/Shader.cpp
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
@@ -69,10 +70,10 @@ endif
 ## BUILD RULES
 ##---------------------------------------------------------------------
 
-%.o: %.hpp %.cpp
+%.o: %.h %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-%.o: $(GLFW_DIR)/%.hpp $(GLFW_DIR)/%.cpp
+%.o: $(GLFW_DIR)/%.h $(GLFW_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 %.o:$(GLFW_DIR)/%.cpp

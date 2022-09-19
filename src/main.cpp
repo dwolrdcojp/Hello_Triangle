@@ -1,25 +1,9 @@
 #include "../include/glad/glad.h"
+#include "../include/Shader.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
 
-const char* vertexShaderSource = "#version 330 core\n"
-  "layout (location = 0) in vec3 aPos;\n"
-  "layout (location = 1) in vec3 aColor;\n"
-  "out vec3 ourColor;\n"
-  "void main()\n"
-  "{\n"
-  " gl_Position = vec4(aPos, 1.0);\n"
-  " ourColor = aColor;\n"
-  "}\0";
-
-const char* fragmentShaderSource = "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "in vec3 ourColor;\n"
-  "void main()\n"
-  "{\n"
-  " FragColor = vec4(ourColor, 1.0f);\n"
-  "}\0";
 
 // Callback function to adjust the viewport if the GLFW window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -116,6 +100,10 @@ int main()
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
   */
 
+  // Shader class 
+  Shader ourShader("../shaders/shader.vs", "../shaders/shader.fs");
+
+
   // Linking Vertex Attributes
   // Position attributes 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -123,7 +111,7 @@ int main()
   // Color attributes
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
   glEnableVertexAttribArray(1);
-
+/*
   // Vertex shader 
   unsigned int vertexShader;
   vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -176,6 +164,7 @@ int main()
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 
+*/
 
   // End Shaders, Vertex Buffer Objects, Vertex Array Objects
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -192,13 +181,11 @@ int main()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // Custom color for fragmentShader
-    float timeValue = glfwGetTime();
-    float greenValue = (std::cos(timeValue) / 2.0f)+ 0.5f;
-    int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
 
     // Use the program 
-    glUseProgram(shaderProgram);
-    glUniform4f(vertexColorLocation, 1.0f, greenValue, 0.0f, 1.0f);
+    // glUseProgram(shaderProgram);
+    ourShader.use();
+    ourShader.setFloat("someUniform", 1.0f);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
