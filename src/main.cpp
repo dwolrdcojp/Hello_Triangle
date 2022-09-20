@@ -173,10 +173,10 @@ int main()
   // TEXTURES &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
   // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
-  unsigned int texture; 
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-
+  unsigned int texture1; 
+  unsigned int texture2; 
+  glGenTextures(1, &texture1);
+  glBindTexture(GL_TEXTURE_2D, texture1);
   // Set the texture wrapping / filtering options (on the currently bound texture) 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -200,6 +200,37 @@ int main()
   // free the image memory
   stbi_image_free(data);
 
+  glGenTextures(1, &texture2);
+  glBindTexture(GL_TEXTURE_2D, texture2);
+
+  // Set the texture wrapping / filtering options (on the currently bound texture) 
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  filePath = "../assets/awesomeface.png";
+  stbi_set_flip_vertically_on_load(true);
+  data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
+
+  if (data)
+  {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  }
+  else 
+  {
+    std::cout << "Failed to load texture" << std::endl;
+  }
+  // free the image memory
+  stbi_image_free(data);
+
+  // Tell OpenGL which texture unit each shader sampler belongs to by setting each sampler using glUniform1i
+  // Only have to set this once so we can do it before entering the render loop 
+  ourShader.use();
+  glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);  // do it manually with gl
+  ourShader.setInt("texture2", 1); // or with our shader class function 
+
   // GLFW Render Loop!
   while(!glfwWindowShouldClose(window))
   {
@@ -215,8 +246,10 @@ int main()
 
     // Use the program 
     // glUseProgram(shaderProgram);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    ourShader.use();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
