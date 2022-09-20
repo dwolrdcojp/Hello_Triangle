@@ -19,6 +19,7 @@ GLFW_DIR = ../
 SOURCES = main.cpp
 SOURCES += $(GLFW_DIR)/src/glad.c 
 SOURCES += $(GLFW_DIR)/src/Shader.cpp
+SOURCES += $(GLFW_DIR)/src/stb_image.cpp
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL

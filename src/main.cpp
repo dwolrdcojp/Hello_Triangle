@@ -1,9 +1,9 @@
 #include "../include/glad/glad.h"
 #include "../include/Shader.h"
+#include "../include/stb_image.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
-
 
 // Callback function to adjust the viewport if the GLFW window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -61,24 +61,24 @@ int main()
   int numberOfVertexAttributes;
   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &numberOfVertexAttributes);
   std::cout << "Maximum number of vertex attributes supported: " << numberOfVertexAttributes << std::endl;
-
+  
+  
   //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
   // Begin Shaders, Vertex Buffer Objects, Vertex Array Objects 
 
   // 3 vertices x, y, z 
   float vertices[] = {
-    // Positions       // Colors  
-    0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
-    -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left 
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // top
+    // Positions          // Colors            // Texture coordinates
+     0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,   // Top right 
+     0.5f, -0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,  // Bottom right 
+    -0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f, // bottom left 
+    -0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f   // top left 
   };
 
-  /* EBO indices
   unsigned int indices[] = { // note that we start from 0! 
     0, 1, 3, // first triangle
     1, 2, 3
   };
-  */
 
   // VAO
   unsigned int VAO;
@@ -92,25 +92,25 @@ int main()
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   // EBO -- Element Array Buffer Object
-  /*
   unsigned int EBO;
   glGenBuffers(1, &EBO);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-  */
 
   // Shader class 
   Shader ourShader("../shaders/shader.vs", "../shaders/shader.fs");
 
-
   // Linking Vertex Attributes
   // Position attributes 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
   // Color attributes
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
   glEnableVertexAttribArray(1);
+  // Texture Attributes
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
+  glEnableVertexAttribArray(2);
 /*
   // Vertex shader 
   unsigned int vertexShader;
@@ -169,6 +169,37 @@ int main()
   // End Shaders, Vertex Buffer Objects, Vertex Array Objects
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+  // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  // TEXTURES &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+  unsigned int texture; 
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  // Set the texture wrapping / filtering options (on the currently bound texture) 
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  // Load and generate the texture using the stb_image library 
+  int width, height, nrChannels;
+  std::string filePath = "../assets/container.jpg";
+  unsigned char *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
+
+  if (data)
+  {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  }
+  else 
+  {
+    std::cout << "Failed to load texture" << std::endl;
+  }
+  // free the image memory
+  stbi_image_free(data);
+
   // GLFW Render Loop!
   while(!glfwWindowShouldClose(window))
   {
@@ -184,11 +215,10 @@ int main()
 
     // Use the program 
     // glUseProgram(shaderProgram);
+    glBindTexture(GL_TEXTURE_2D, texture);
     ourShader.use();
-    ourShader.setFloat("someUniform", 1.0f);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // Check and call events and swap the buffers
     glfwSwapBuffers(window);
