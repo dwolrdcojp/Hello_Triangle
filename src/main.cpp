@@ -69,10 +69,10 @@ int main()
   // 3 vertices x, y, z 
   float vertices[] = {
     // Positions          // Colors            // Texture coordinates
-     0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,   // Top right 
-     0.5f, -0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,  // Bottom right 
+     0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  2.0f,  2.0f,   // Top right 
+     0.5f, -0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  2.0f,  0.0f,  // Bottom right 
     -0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f, // bottom left 
-    -0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f   // top left 
+    -0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  0.0f,  0.0f,  2.0f   // top left 
   };
 
   unsigned int indices[] = { // note that we start from 0! 
