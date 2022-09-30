@@ -5,24 +5,14 @@
 #include <iostream>
 #include <cmath>
 
+
 // Callback function to adjust the viewport if the GLFW window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 // Process input in the window 
 void processInput(GLFWwindow* window);
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-  glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow* window)
-{
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-  {
-    glfwSetWindowShouldClose(window, true);
-  }
-}
+float opacity = 0.5f;
 
 int main()
 {
@@ -244,12 +234,14 @@ int main()
 
     // Custom color for fragmentShader
 
+    
     // Use the program 
     // glUseProgram(shaderProgram);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
+    ourShader.setFloat("visible", opacity); // set opacity / visible uniform to 80%
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -262,4 +254,33 @@ int main()
   glfwTerminate();
   return 0;
 
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+  glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow* window)
+{
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+  {
+    glfwSetWindowShouldClose(window, true);
+  }
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+  {
+    opacity += 0.01f;
+    if(opacity > 1.0f)
+    {
+      opacity = 1.0f;
+    }
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+  {
+    opacity -= 0.01f;
+    if(opacity < 0.0f)
+    {
+      opacity = 0.0f;
+    }
+  }
 }
