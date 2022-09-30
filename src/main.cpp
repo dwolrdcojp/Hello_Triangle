@@ -68,11 +68,11 @@ int main()
 
   // 3 vertices x, y, z 
   float vertices[] = {
-    // Positions          // Colors            // Texture coordinates
-     0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,   // Top right 
-     0.5f, -0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,  // Bottom right 
-    -0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f, // bottom left 
-    -0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f   // top left 
+    // Positions           // Colors            // Texture coordinates
+     0.5f,  0.5f,  0.0f,   1.0f,  0.0f,  0.0f,   0.55f,  0.55f,   // Top right 
+     0.5f, -0.5f,  0.0f,   0.0f,  1.0f,  0.0f,   0.55f,  0.45f,  // Bottom right 
+    -0.5f, -0.5f,  0.0f,   0.0f,  0.0f,  1.0f,   0.45f,  0.45f, // bottom left 
+    -0.5f,  0.5f,  0.0f,   1.0f,  1.0f,  0.0f,   0.45f,  0.55f   // top left 
   };
 
   unsigned int indices[] = { // note that we start from 0! 
@@ -180,8 +180,8 @@ int main()
   // Set the texture wrapping / filtering options (on the currently bound texture) 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   // Load and generate the texture using the stb_image library 
   int width, height, nrChannels;
