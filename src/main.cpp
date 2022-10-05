@@ -1,6 +1,9 @@
 #include "../include/glad/glad.h"
 #include "../include/Shader.h"
 #include "../include/stb_image.h"
+#include "../include/glm/glm.hpp"
+#include "../include/glm/gtc/matrix_transform.hpp"
+#include "../include/glm/gtc/type_ptr.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
@@ -230,6 +233,11 @@ int main()
   ourShader.use();
   glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);  // do it manually with gl
   ourShader.setInt("texture2", 1); // or with our shader class function 
+  
+
+  // GLM 
+
+  // End GLM
 
   // GLFW Render Loop!
   while(!glfwWindowShouldClose(window))
@@ -243,6 +251,11 @@ int main()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // Custom color for fragmentShader
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+    trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+    unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
     // Use the program 
     // glUseProgram(shaderProgram);
