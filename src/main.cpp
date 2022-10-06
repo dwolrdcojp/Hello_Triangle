@@ -261,6 +261,14 @@ int main()
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+    glm::mat4 trans1 = glm::mat4(1.0f);
+    trans1 = glm::translate(trans1, glm::vec3(-0.5f, 0.5f, 0.0f));
+    trans1 = glm::scale(trans1, glm::sin((float)glfwGetTime()) * glm::vec3(0.5f, 0.5f, 0.0f));
+    unsigned int transformLoc1 = glGetUniformLocation(ourShader.ID, "transform");
+    glUniformMatrix4fv(transformLoc1, 1, GL_FALSE, glm::value_ptr(trans1));
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
     // Check and call events and swap the buffers
     glfwSwapBuffers(window);
     glfwPollEvents();
